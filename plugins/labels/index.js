@@ -6,6 +6,7 @@ let $ = require("jquery");
 let Plugin = require("../base");
 let annotate = require("../shared/annotate")("labels");
 let audit = require("../shared/audit");
+let summary = require("../shared/summary");
 
 let errorTemplate = require("./error-template.handlebars");
 
@@ -22,24 +23,31 @@ class LabelsPlugin extends Plugin {
         return errorTemplate({
             placeholder: $el.attr("placeholder"),
             id: $el.attr("id"),
-            tagName: $el.prop("tagName").toLowerCase()
+            tagName: $el.prop("tagName").toLowerCase(),
+            title: $el.attr("title")
         });
     }
 
     run() {
-        let result = audit("controlsWithoutLabel");
+        let that = this;
+        audit(['label', 'label-title-only'], function (results) {
+            if (results.violations.length) {
+                $(results.violations).each((j, rule) => {
+                    let impact = rule.impact;
+                    $(rule.nodes).each((i, node) => {
+                        let el = $(node.target[0]);
+                        let title = "Input is missing a label";
 
-        if (result.result === "FAIL") {
-            result.elements.forEach((element) => {
-                let $el = $(element);
-                let title = "Input is missing a label";
+                        // Place an error label on the element and register it as an
+                        // error in the info panel
+                        let entry = that.error(title, summary(node) + that.errorMessage(el), el);
+                        annotate.errorLabel(el, "", title, entry);
+                    });
+                    that.panel.render();
+                });
+            }
+        });
 
-                // Place an error label on the element and register it as an
-                // error in the info panel
-                let entry = this.error(title, this.errorMessage($el), $el);
-                annotate.errorLabel($el, "", title, entry);
-            });
-        }
     }
 
     cleanup() {

@@ -1,36 +1,29 @@
 /**
- * Abstractions for how we use Accessibility Developer Tools
+ * Abstractions for how we use axe-core
  */
 
-function allRuleNames() {
-    return axs.AuditRules.getRules().map(rule => rule.name);
-}
+// Audits for a list of rules, or using all the rules within the scope of the document, excluding our UI
 
-// Creates an audit configuration that whitelists a single rule and limits the
-// amount of tests to run
-function createWhitelist(ruleName) {
-    var config = new axs.AuditConfiguration();
-    config.showUnsupportedRulesWarning = false;
-
-    // Ignore elements that are part of the toolbar
-    config.ignoreSelectors(ruleName, ".tota11y *");
-
-    allRuleNames().forEach((name) => {
-        if (name !== ruleName) {
-            config.ignoreSelectors(name, "*");
-        }
-    });
-
-    return config;
-}
-
-// Audits for a single rule (by name) and returns the results for only that
-// rule
-function audit(ruleName) {
-    let whitelist = createWhitelist(ruleName);
-
-    return axs.Audit.run(whitelist)
-        .filter(result => result.rule.name === ruleName)[0];
+function audit(rules, cb) {
+    var scope = {
+            include: [['html']],
+            exclude: [['.tota11y-toolbar']]
+        };
+    if (typeof rules !== 'undefined') {
+        axe.a11yCheck(scope, {
+                runOnly: {
+                    type: "rule",
+                    values: rules
+                }
+            }, cb);
+    } else {
+        axe.a11yCheck(scope, {
+                runOnly: {
+                    type: "tag",
+                    values: ['wcag2a', 'wcag2aa', 'best-practice']
+                }
+            }, cb);
+    }
 }
 
 module.exports = audit;

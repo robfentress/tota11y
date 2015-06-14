@@ -10,6 +10,8 @@
 @togglePadding: 7px;
 @toggleCollapsedWidth: 35px;
 @toggleHeight: 25px;
+@bpRadius:6px;
+@bpPadding:3px;
 
 .tota11y-toolbar {
     .tota11y-dark-color-scheme;
@@ -88,4 +90,12 @@
         width: @descriptionWidth;
         margin-right: 3px;
     }
+}
+span.tota11y-best-practice {
+    font-weight:bold;
+    color:white;
+    background-color:@darkGray;
+    border-radius:@bpRadius;
+    padding:@bpPadding;
+    float:right;
 }

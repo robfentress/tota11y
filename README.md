@@ -39,7 +39,7 @@ which will automatically update as you make changes.
 
 ## Special thanks
 
-Many of tota11y's features come straight from [Google Chrome's Accessibility Developer Tools](https://github.com/GoogleChrome/accessibility-developer-tools). We use this library heavily at [Khan Academy](http://khanacademy.org).
+Many of tota11y's features come straight from [Deque's aXe](https://github.com/dequelabs/axe-core). We use this library heavily at [Khan Academy](http://khanacademy.org).
 
 The awesome glasses in our logo were created by [Kyle Scott](https://thenounproject.com/Kyle/) and are licensed under [CC BY 3.0](http://creativecommons.org/licenses/by/3.0/us/legalcode).
 

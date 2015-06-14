@@ -1,6 +1,5 @@
 /**
- * A plugin to identify unclear link text such as "more" and "click here,"
- * which can make for a bad experience when using a screen reader
+ * A plugin to identify empty link text such as when used with background images
  */
 
 let $ = require("jquery");
@@ -21,26 +20,32 @@ class LinkTextPlugin extends Plugin {
     }
 
     run() {
-        let test = audit("linkWithUnclearPurpose");
+        let that = this;
+        let test = audit(['link-name'], function (results) {
+            if (results.violations.length) {
+                $(results.violations).each((j, rule) => {
+                    let impact = rule.impact;
+                    $(rule.nodes).each((i, node) => {
+                        let $el = $(node.target[0]);
+                        let description = `
+                            The text <i>"${$el.text()}"</i> is unclear without context
+                            and may be confusing to screen readers. Consider
+                            rearranging the <code>&lt;a&gt;&lt;/a&gt;</code> tags or
+                            including special screen reader text.
+                        `;
+                        // TODO: A "show me how" link may be even more helpful
 
-        if (test.result === "FAIL") {
-            test.elements.forEach((el, i) => {
-                let $el = $(el);
-                let description = `
-                    The text <i>"${$el.text()}"</i> is unclear without context
-                    and may be confusing to screen readers. Consider
-                    rearranging the <code>&lt;a&gt;&lt;/a&gt;</code> tags or
-                    including special screen reader text.
-                `;
-                // TODO: A "show me how" link may be even more helpful
+                        let entry = that.error(
+                            "Link text is unclear", description, $el);
 
-                let entry = this.error(
-                    "Link text is unclear", description, $el);
+                        annotate.errorLabel(
+                            $el, "", `Link text "${$el.text()}" is unclear`, entry);
+                    });
+                    that.panel.render();
+                });
+            }
 
-                annotate.errorLabel(
-                    $el, "", `Link text "${$el.text()}" is unclear`, entry);
-            });
-        }
+        });
     }
 
     cleanup() {

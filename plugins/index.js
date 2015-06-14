@@ -10,6 +10,7 @@ let HeadingsPlugin = require("./headings");
 let LabelsPlugin = require("./labels");
 let LandmarksPlugin = require("./landmarks");
 let LinkTextPlugin = require("./link-text");
+let EverythingPlugin = require("./everything");
 
 module.exports = [
     new HeadingsPlugin(),
@@ -18,4 +19,5 @@ module.exports = [
     new LabelsPlugin(),
     new AltTextPlugin(),
     new LandmarksPlugin(),
+    new EverythingPlugin()
 ];

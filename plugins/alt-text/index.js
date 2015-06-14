@@ -5,43 +5,50 @@
 let $ = require("jquery");
 let Plugin = require("../base");
 let annotate = require("../shared/annotate")("alt-text");
+let audit = require("../shared/audit");
+let summary = require("../shared/summary");
 
 let errorTemplate = require("./error.handlebars");
 
 class AltTextPlugin extends Plugin {
     getTitle() {
-        return "Image alt-text";
+        return "alt-texts";
     }
 
     getDescription() {
-        return "Annotates images without alt text";
+        return "Annotates elements without alt text";
     }
 
     run() {
-        $("img").each((i, el) => {
-            let $el = $(el);
+        let that = this;
 
-            if ($el.attr("alt") === "" || $el.attr("role") === "presentation") {
-                // Presentation images are fine.
-                //
-                // We'll label them as "decorative" to point out to users
-                // that they do not explicitly convey information.
-                annotate.label($el, "&#x2713; decorative")
-                    .addClass("tota11y-label-success");
+        audit(
+            ["area-alt", "image-alt", "input-img-alt", "object-alt"],
+            function (results) {
+                console.log(results)
+                if (results.violations.length) {
+                    $(results.violations).each((j, rule) => {
+                        let impact = rule.impact;
+                        $(rule.nodes).each((i, node) => {
+                            let el = $(node.target[0]);
+                            annotate.label(el, "&#x2717;")
+                                .addClass("tota11y-label-error");
 
-            } else if ($el.attr("alt")) {
-                // Image has proper alt text
-                // TODO: aria-label, etc from axs.properties.alternative
-                annotate.label($el, "&#x2713;")
-                    .addClass("tota11y-label-success");
-
-            } else {
-                annotate.label($el, "&#x2717;")
-                    .addClass("tota11y-label-error");
-
-                this.error("Image is missing alt text", errorTemplate(), $el);
-            }
-        });
+                            that.error("Element is missing alt text. ", summary(node) + errorTemplate({impact:impact}), el);
+                        });
+                    });
+                }
+                if (results.passes.length) {
+                    $(results.passes).each((j, rule) => {
+                        $(rule.nodes).each((i, node) => {
+                            let el = $(node.target[0]);
+                            annotate.label(el, "&#x2713;")
+                                .addClass("tota11y-label-success");
+                        });
+                    });
+                }
+                that.panel.render();
+            });
     }
 
     cleanup() {

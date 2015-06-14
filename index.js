@@ -13,7 +13,7 @@ var plugins = require("./plugins");
 var toolbarTemplate = require("./templates/toolbar.handlebars");
 
 // Chrome Accessibility Developer Tools - required once as a global
-require("script!./node_modules/accessibility-developer-tools/dist/js/axs_testing.js");
+require("script!./node_modules/axe-core/axe.js");
 
 class Toolbar {
     appendTo($el) {

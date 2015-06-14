@@ -22,9 +22,18 @@ class LandmarksPlugin extends Plugin {
         //
         // For now, we'll place the label with JavaScript.
 
-        const $regions = $("[role]");
+        let $regions = $("[role]");
+        const regionRoles = ['main', 'banner', 'complementary', 'contentinfo', 'navigation', 'search', 'article', 'region'];
         $regions.each(function() {
-            annotate.label($(this), $(this).attr("role"));
+            let role = $(this).attr("role");
+            if (regionRoles.indexOf(role) !== -1) {
+                annotate.label($(this), role);
+            }
+        });
+        $regions = $("footer, main, header, article, nav");
+        $regions.each(function() {
+            let name = this.nodeName.toLowerCase();
+            annotate.label($(this), "&lt;" + name + "&gt;");
         });
     }
 

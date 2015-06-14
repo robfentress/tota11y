@@ -21,22 +21,13 @@ class ContrastPlugin extends Plugin {
         return "Labels elements with insufficient contrast";
     }
 
-    addError({fgColor, bgColor, contrastRatio, requiredRatio}, el) {
-        // Suggest colors at an "AA" level
-        let suggestedColors = axs.utils.suggestColors(
-            bgColor,
-            fgColor,
-            contrastRatio,
-            getComputedStyle(el)).AA;
-
+    addError({fgColor, bgColor, contrastRatio, requiredRatio, impact}, el) {
         let templateData = {
-            fgColorHex: axs.utils.colorToString(fgColor),
-            bgColorHex: axs.utils.colorToString(bgColor),
+            fgColorHex: fgColor,
+            bgColorHex: bgColor,
             contrastRatio: contrastRatio,
             requiredRatio: requiredRatio,
-            suggestedFgColorHex: suggestedColors.fg,
-            suggestedBgColorHex: suggestedColors.bg,
-            suggestedColorsRatio: suggestedColors.contrast
+            impact: impact
         };
 
         return this.error(
@@ -45,80 +36,65 @@ class ContrastPlugin extends Plugin {
             $(el));
     }
 
+    calculateRequiredRatio(data) {
+        let fontSize = parseFloat(data.fontSize, 10);
+        let fontWeight = data.fontWeight.toLowerCase();
+
+        if (fontWeight === 'bold' || fontWeight === 'bolder') {
+            if (fontSize > 14) {
+                return 3.0;
+            } else {
+                return 4.5;
+            }
+        } else if (fontSize > 18) {
+            return 3.0;
+        } else {
+            return 4.5;
+        }
+    }
+
     run() {
         // A map of fg/bg color pairs that we have already seen to the error
         // entry currently present in the info panel
         let combinations = {};
+        let that = this;
 
-        $("*").each((i, el) => {
-            // Only check elements with a direct text descendant
-            if (!axs.properties.hasDirectTextDescendant(el)) {
-                return;
+        axe.a11yCheck({
+            include: [['body']],
+            exclude: [['.tota11y-toolbar']]
+        }, {
+            runOnly: {
+                type: "rule",
+                values: ["color-contrast"]
             }
+        }, function (results) {
+            if (results.violations.length) {
+                let impact = results.violations[0].impact;
+                $(results.violations[0].nodes).each((i, node) => {
+                    let el = $(node.target[0]);
+                    let contrastRatio = node.any[0].data.contrastRatio;
+                    let requiredRatio =  that.calculateRequiredRatio(node.any[0].data)
+                    let fgColor = node.any[0].data.fgColor;
+                    let bgColor = node.any[0].data.bgColor;
 
-            // Ignore elements that are part of the tota11y UI
-            if ($(el).parents(".tota11y").length > 0) {
-                return;
-            }
-
-            // Ignore invisible elements
-            if (axs.utils.elementIsTransparent(el) ||
-                axs.utils.elementHasZeroArea(el)) {
-                    return;
-            }
-
-            let style = getComputedStyle(el);
-            let bgColor = axs.utils.getBgColor(style, el);
-            let fgColor = axs.utils.getFgColor(style, el, bgColor);
-            let contrastRatio = axs.utils.calculateContrastRatio(
-                fgColor, bgColor).toFixed(2);
-
-            // Calculate required ratio based on size
-            // Using strings to prevent rounding
-            let requiredRatio = axs.utils.isLargeFont(style) ?
-                "3.0" : "4.5";
-
-            // Build a key for our `combinations` map and report the color
-            // if we have not seen it yet
-            let key = axs.utils.colorToString(fgColor) + "/" +
-                        axs.utils.colorToString(bgColor) + "/" +
-                        requiredRatio;
-
-            if (!axs.utils.isLowContrast(contrastRatio, style)) {
-                // For acceptable contrast values, we don't show ratios if
-                // they have been presented already
-                if (!combinations[key]) {
-                    annotate
-                        .label($(el), contrastRatio)
-                        .addClass("tota11y-label-success");
-
-                    // Add the key to the combinations map. We don't have an
-                    // error to associate it with, so we'll just give it the
-                    // value of `true`.
-                    combinations[key] = true;
-                }
-            } else {
-                if (!combinations[key]) {
-                    // We do not show duplicates in the errors panel, however,
-                    // to keep the output from being overwhelming
-                    let error = this.addError(
-                        {fgColor, bgColor, contrastRatio, requiredRatio},
-                        el);
-
-                    combinations[key] = error;
-                }
-
-                // We display errors multiple times for emphasis. Each error
-                // will point back to the entry in the info panel for that
-                // particular color combination.
-                //
-                // TODO: The error entry in the info panel will only highlight
-                // the first element with that color combination
-                annotate.errorLabel(
-                    $(el),
-                    contrastRatio,
-                    "This contrast is insufficient at this size.",
-                    combinations[key]);
+                    let key = fgColor + "/" +
+                                bgColor + "/" +
+                                requiredRatio;
+                    if (!combinations[key]) {
+                        // We do not show duplicates in the errors panel, however,
+                        // to keep the output from being overwhelming
+                        let error = that.addError(
+                            {fgColor, bgColor, contrastRatio, requiredRatio, impact},
+                            el);
+                        combinations[key] = error;
+                    }
+                    annotate.errorLabel(
+                        $(el),
+                        contrastRatio,
+                        "This contrast is insufficient at this size.",
+                        combinations[key]);
+                });
+                that.panel.render();
             }
         });
     }

@@ -1,7 +1,14 @@
+<h3 class="tota11y-info-error-title">Best practices</h3>
 {{#if placeholder}}
     <p>
         The <code>placeholder</code> attribute is not guaranteed to be read by
         assistive technologies. It is better to include a proper label.
+    </p>
+{{/if}}
+
+{{#if title}}
+    <p>
+        The <code>title</code> attribute is does not function as a visible label for keyboard only users, there must be a visible label that is not a placeholder.
     </p>
 {{/if}}
 
