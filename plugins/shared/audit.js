@@ -5,11 +5,12 @@
 // Audits for a list of rules, or using all the rules within the scope of the document, excluding our UI
 
 function audit(rules, cb) {
-    var scope = {
-            include: [['html']],
-            exclude: [['.tota11y-toolbar']]
-        };
-    if (typeof rules !== 'undefined') {
+    //console.log(selectors);
+    var scope = (typeof selectors !== 'undefined') ? selectors : {
+        include: [['html']],
+        exclude: [['.tota11y-toolbar']]
+    };
+    if (rules !== 'tag') {
         axe.a11yCheck(scope, {
                 runOnly: {
                     type: "rule",

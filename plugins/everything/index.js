@@ -22,6 +22,7 @@ class LinkTextPlugin extends Plugin {
     run() {
         let that = this;
         let test = audit(undefined, function (results) {
+
             if (results.violations.length) {
                 $(results.violations).each((j, rule) => {
                     let impact = rule.impact;
