@@ -5,12 +5,53 @@
 let $ = require("jquery");
 let Plugin = require("../base");
 let annotate = require("../shared/annotate")("everything");
-let audit = require("../shared/audit");
 let summary = require("../shared/summary");
 
 let errorTemplate = require("./error.handlebars");
 
-class LinkTextPlugin extends Plugin {
+class ContextPlugin extends Plugin {
+
+    constructor() {
+        super();
+        this.conf;
+        this.setConf();
+    }
+
+    getParameterByName(name, url) {
+        if (!url) url = window.location.href;
+        name = name.replace(/[\[\]]/g, "\\$&");
+        var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+            results = regex.exec(url);
+        if (!results) return null;
+        if (!results[2]) return '';
+        return decodeURIComponent(results[2].replace(/\+/g, " "));
+    }
+
+    getConf() {
+        return (typeof this.conf === "undefined") ? this.setConf(this.getConf) : this.conf;
+    }
+
+    setConf(cb, err) {
+        var that = this;
+        $.getJSON( this.getParameterByName('conf'), function( data ) {
+            that.conf = data;
+        }).fail(function(msg){
+            console.log("Error loading configuration file: "+msg.responseText);
+        }).then(function(){
+            typeof cb === 'function' && cb();
+        }, function(){
+            typeof err === 'function' && err();
+        });
+    }
+
+    getContext() {
+        return this.getConf().context;
+    }
+
+    getOptions() {
+        return this.getConf().options;
+    }
+
     getTitle() {
         return "Custom aXe Test";
     }
@@ -20,9 +61,10 @@ class LinkTextPlugin extends Plugin {
     }
 
     run() {
+
         let that = this;
-        let rules = (ruleset) ? ruleset : "tag";
-        let test = audit(rules, function (results) {
+
+        axe.a11yCheck(this.getContext(), this.getOptions(), function (results) {
             if (results.violations.length) {
                 $(results.violations).each((j, rule) => {
                     let impact = rule.impact;
@@ -49,4 +91,4 @@ class LinkTextPlugin extends Plugin {
     }
 }
 
-module.exports = LinkTextPlugin;
+module.exports = ContextPlugin;
