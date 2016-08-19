@@ -27,7 +27,9 @@
   },
   "scripts": {
     "build": "webpack -p",
-    "test": "open http://localhost:8080/webpack-dev-server/?conf=conf.json && webpack-dev-server --hot"
+    "test": "open http://localhost:8080/webpack-dev-server/ && webpack-dev-server --hot",
+    "testcustom": "open http://localhost:8080/webpack-dev-server/?conf=test/custom.json && webpack-dev-server --hot",
+    "testfixture": "open 'http://localhost:8080/webpack-dev-server/?conf=test/fixture.json&fixture=true' && webpack-dev-server --hot"
   },
   "license": "MIT"
 }

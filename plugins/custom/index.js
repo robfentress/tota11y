@@ -14,7 +14,35 @@ class ContextPlugin extends Plugin {
     constructor() {
         super();
         this.conf;
-        this.setConf();
+        this.setTitle("Custom aXe Test");
+        this.setDescription('Runs specified Deque aXe\'s rules on specific selectors');
+        this.setConf(() => {
+            if (typeof this.getConf().branding !== "undefined") {
+                this.setTitle(this.getConf().branding.brand || this.getTitle());
+            }
+        });
+        /*this.getConf().filter(conf => conf.branding).find(fn => {
+         this.setTitle((fn.brand) || this.getTitle());
+         this.setDescription((fn.application) || this.getDescription());
+         } );
+         this.render();*/
+        /*this.setConf(() => {
+            var that = this;
+            var conf = this.getConf;
+            this.setTitle(() => {
+                var title = that.getTitle;
+                this.title = (typeof conf.branding.brand ==="undefined") ?
+                    title :
+                    conf.branding.brand;
+            });
+            this.setDescription(() => {
+                var description = that.getDescription;
+                this.description = (typeof conf.branding.application ==="undefined") ?
+                    description :
+                    conf.branding.application;
+            });
+            this.render();
+        });*/
     }
 
     getParameterByName(name, url) {
@@ -25,6 +53,15 @@ class ContextPlugin extends Plugin {
         if (!results) return null;
         if (!results[2]) return '';
         return decodeURIComponent(results[2].replace(/\+/g, " "));
+    }
+
+    setTitle(title) {
+        this.title = title;
+        this.panel.setTitle(this.title);
+    }
+
+    setDescription(description) {
+        this.description = description;
     }
 
     getConf() {
@@ -53,11 +90,11 @@ class ContextPlugin extends Plugin {
     }
 
     getTitle() {
-        return "Custom aXe Test";
+        return this.title;
     }
 
     getDescription() {
-        return 'Runs specified Deque aXe\'s rules on specific selectors';
+        return this.description;
     }
 
     run() {

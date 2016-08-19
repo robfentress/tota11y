@@ -61,6 +61,24 @@
         "video-caption",
         "video-description"
       ]
+    },
+    "runOnly": {
+      "type": "tags",
+      "value": {
+        "include": ["wcag2a", "wcag2aa"],
+        "exclude": ["wcag2aa"]
+      }
+    },
+    "runOnly": {
+      "type": "tag",
+      "values": []
+    },
+
+    "rules": {
+      "color-contrast": { "enabled": "false" },
+      "skip-link": {"enabled": "false"},
+      "image-alt": { "enabled": "true" }
     }
+
   }
 }

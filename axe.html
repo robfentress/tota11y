@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h1>monkey</h1>
+<script src="node_modules/jquery/dist/jquery.js"></script>
+<script src="node_modules/axe-core/axe.js"></script>
+<script>
+    $(function() {
+        let that = {};
+        function ret(str) {
+            try {
+                return eval(str);
+            }
+            catch(err) {
+                return false;
+            }
+        }
+
+        $.getJSON( "test/fixture.json", (data) => {
+            //data = JSON.parse(data);
+            that.conf = data;
+            that.options = ret("that.conf.options");
+            that.runOnly = ret("that.options.runOnly");
+            var ruleSet = [];
+
+            var exclusions = [];
+
+            var rules = ret("that.options.rules") || {};
+
+            function r(sel) {
+                return Array.from(axe.getRules(ret(sel)), r => r.ruleId)
+            }
+            function comb(ary, sel) {
+                return ary.concat((ret(sel)) ? r(sel) : [])
+            }
+            function isType(type, sel) {
+                return ret("that.runOnly.type") === type;
+            }
+
+            Object.keys(rules).forEach((rule) => {
+                if (rules[rule].enabled === "true") {
+                    ruleSet.push(rule);
+                } else {
+                    exclusions.push(rule);
+                }
+            });
+            console.log("Exclusions after rules "+exclusions.length);
+
+            //console.log(ret("that.options"));
+            ruleSet = ruleSet.concat((isType("tag") && ret("that.runOnly.values")) ? r("that.runOnly.values") : []);
+            console.log("Ruleset after type=tag "+ruleSet.length);
+            ruleSet = ruleSet.concat((isType("rule") && ret("that.runOnly.values")) ? ret("that.runOnly.values") : []);
+            console.log("Ruleset after type=rule "+ruleSet.length);
+
+            if (isType("tags")) {
+                ruleSet = comb(ruleSet,"that.runOnly.value.include");
+                console.log("Exclusions before tags exclude "+exclusions.length);
+                console.log("Exclusions after tags exclude "+r("that.runOnly.value.exclude").length);
+                exclusions = comb(exclusions, "that.runOnly.value.exclude");
+                console.log("Exclusions after combining exclude "+exclusions.length);
+            }
+            console.log("Ruleset after type=tags "+ruleSet.length);
+
+            //ruleSet = ruleSet.concat(inclusions);
+            console.log("Ruleset before unique "+ruleSet.length);
+            ruleSet = new Set(ruleSet);
+            console.log("Ruleset after unique "+Array.from(ruleSet).length);
+
+            exclusions = new Set(exclusions);
+
+            console.log("Ruleset before exclusions "+Array.from(ruleSet).length);
+            ruleSet = new Set(Array.from(ruleSet).filter(x => !exclusions.has(x)));
+            console.log("Ruleset after exclusions "+Array.from(ruleSet).length);
+
+
+            axe.a11yCheck(that.conf.context, that.options, function (results) {
+                //console.log(results)
+            })
+        }).fail((msg) => {
+            eval(msg.responseText);
+            console.log("Error loading configuration file: "+msg.responseText);
+        }).then((conf) => {
+            if (typeof conf !== "undefined") console.log("after executing");
+        }, function(){
+            console.log("Error with callback");
+        });
+    })
+</script>
+</body>
+</html>
