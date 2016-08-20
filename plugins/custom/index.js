@@ -21,30 +21,10 @@ class ContextPlugin extends Plugin {
                 this.setTitle(this.getConf().branding.brand || this.getTitle());
             }
         });
-        /*this.getConf().filter(conf => conf.branding).find(fn => {
-         this.setTitle((fn.brand) || this.getTitle());
-         this.setDescription((fn.application) || this.getDescription());
-         } );
-         this.render();*/
-        /*this.setConf(() => {
-            var that = this;
-            var conf = this.getConf;
-            this.setTitle(() => {
-                var title = that.getTitle;
-                this.title = (typeof conf.branding.brand ==="undefined") ?
-                    title :
-                    conf.branding.brand;
-            });
-            this.setDescription(() => {
-                var description = that.getDescription;
-                this.description = (typeof conf.branding.application ==="undefined") ?
-                    description :
-                    conf.branding.application;
-            });
-            this.render();
-        });*/
     }
 
+    // From: Gras Double (http://stackoverflow.com/users/289317/gras-double)
+    // Reference: http://stackoverflow.com/questions/901115/how-can-i-get-query-string-values-in-javascript
     getParameterByName(name, url) {
         if (!url) url = window.location.href;
         name = name.replace(/[\[\]]/g, "\\$&");
@@ -70,8 +50,8 @@ class ContextPlugin extends Plugin {
 
     setConf(cb, err) {
         var that = this;
-        $.getJSON( this.getParameterByName('conf'), function( data ) {
-            that.conf = data;
+        $.getJSON( this.getParameterByName('aXeA11yConf'), function( data ) {
+            that.conf = data[0];
         }).fail(function(msg){
             console.log("Error loading configuration file: "+msg.responseText);
         }).then(function(){

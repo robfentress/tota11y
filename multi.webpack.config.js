@@ -13,7 +13,7 @@ var veryimportant = postcss.plugin("veryimportant", function() {
 
 module.exports = {
     entry: {
-        app: "./index.js"
+        app: "./index-multi.js"
     },
     debug: true,
     devtool: 'source-map',

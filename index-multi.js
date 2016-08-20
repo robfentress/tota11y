@@ -15,8 +15,10 @@ var toolbarTemplate = require("./templates/toolbar.handlebars");
 // Chrome Accessibility Developer Tools - required once as a global
 require("script!./node_modules/axe-core/axe.js");
 
-let FixturePlugin = require("./plugins/fixture");
+let MultiPlugin = require("./plugins/multi");
 
+// From: Gras Double (http://stackoverflow.com/users/289317/gras-double)
+// Reference: http://stackoverflow.com/questions/901115/how-can-i-get-query-string-values-in-javascript
 function getParameterByName(name, url) {
     if (!url) url = window.location.href;
     name = name.replace(/[\[\]]/g, "\\$&");
@@ -46,10 +48,7 @@ class Toolbar {
     }
 
     appendFixture(fixture, pluginsContainer) {
-        console.log("append fixture ");
-        var conf = this.getConf();
-        conf.include = fixture;
-        var plugin = new FixturePlugin(conf);
+        var plugin = new MultiPlugin(fixture);
         plugin.appendTo(pluginsContainer);
     }
 
@@ -71,7 +70,7 @@ class Toolbar {
         });
 
         if (this.getConf()) {
-            this.getInclude().forEach((fixture) => this.appendFixture(fixture, $pluginsContainer));
+            this.getConf().forEach((fixture) => this.appendFixture(fixture, $pluginsContainer));
         }
 
     }
@@ -79,8 +78,8 @@ class Toolbar {
 
 $(function() {
     var bar = new Toolbar();
-    if ((getParameterByName('fixture') === "true") && getParameterByName('conf')) {
-        $.getJSON( getParameterByName('conf'), (data) => {
+    if ((getParameterByName('aXeA11yMulti') === "true") && getParameterByName('aXeA11yConf')) {
+        $.getJSON( getParameterByName('aXeA11yConf'), (data) => {
             return data;
         }).fail((msg) => {
             console.log("Error loading configuration file: "+msg.responseText);

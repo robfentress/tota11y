@@ -11,13 +11,15 @@ let errorTemplate = require("./error.handlebars");
 let summaryTemplate = require("./summary.handlebars");
 require("./style.less");
 
-class FixturePlugin extends Plugin {
+class MultiPlugin extends Plugin {
 
     constructor(conf) {
 
         super();
 
         this.conf = conf;
+        this.context;
+        this.setContext(this.getConf().context);
 
         var context = this.getContext();
 
@@ -29,7 +31,7 @@ class FixturePlugin extends Plugin {
         var excludedRules = []; // rules to be included in scan, except ones to be removed because in excludedTags
         var desc = []; // used to build description string from options in conf
 
-        var branding = this.ret("this.conf.branding");
+        var branding = this.conf.branding;
 
         this.options = this.conf.options;
 
@@ -65,15 +67,16 @@ class FixturePlugin extends Plugin {
             exclusions = exclusions.concat(excludedRules);
             desc.push("- rules [" + excludedRules +"]");
         }
-        inclusions = this.unique(inclusions);
-        exclusions = this.unique(exclusions);
+        inclusions = dedup(inclusions);
+        exclusions = dedup(exclusions);
         inclusions = this.filterRules(inclusions, exclusions);
         this.inclusions = inclusions;
 
         if (branding) {
-            this.title = branding.brand || "Fixture: " + context.include[0].join(', ');
+            this.title = branding.brand || "Fixture: " + context.include;
+            if (branding.application) this.description = branding.application;
         } else {
-            this.title = "Fixture: " + context.include[0].join(', ');
+            this.title = "Fixture: " + context.include;
             this.description = desc.join(' ');
         }
 
@@ -88,48 +91,22 @@ class FixturePlugin extends Plugin {
                 });
             }
         }
-    }
-    hasRules(obj) {
-        return obj.rules;
-    }
-    getValues(obj) {
-        return obj.values;
-    }
-    getValue(obj) {
-        return obj.value;
-    }
-    hasTag(obj) {
-        return (obj.type) || (obj.type === "tag");
-        //return (this.isType("tag") && this.ret("this.runOnly.values"));
-    }
-    hasRule(obj) {
-        return (obj.type) || (obj.type === "tag");
-        //return (this.isType("rule") && this.ret("this.runOnly.values"));
-    }
-    hasTags(obj) {
-        return (obj.type) || (obj.type === "tags");
-        //return (this.isType("tag") && this.ret("this.runOnly.values"));
+
+        function dedup(ary) {
+            return new Set(ary);
+        }
     }
 
-
-    ret(str) {
-        try { return eval(str); } catch(err) { return false; }
-    }
-    unique(ary) {
-        return new Set(ary);
-    }
     filterRules(inc, ex) {
         var inc = Array.from(inc);
-        return Array.from(new Set(inc.filter(r => ex.has(r))))
+        var difference = Array.from(new Set(inc.filter(r => !ex.has(r))));
+        return difference;
     }
     rules(tags) {
         return Array.from(axe.getRules(tags), r => r.ruleId)
     }
-    comb(ary, sel) {
-        return ary.concat((this.ret(sel)) ? this.rules(sel) : [])
-    }
-    isType(type, sel) {
-        return this.ret("this.runOnly.type") === type;
+    getInclusions() {
+        return new Set(this.inclusions);
     }
 
     setTitle(title) {
@@ -137,12 +114,16 @@ class FixturePlugin extends Plugin {
         this.panel.setTitle(this.title);
     }
 
+
     getConf() {
         return this.conf;
     }
 
+    setContext(context) {
+        this.context = context;
+    }
     getContext() {
-        return this.getConf().context;
+        return this.context;
     }
 
     getOptions() {
@@ -160,7 +141,8 @@ class FixturePlugin extends Plugin {
     run() {
 
         let that = this;
-
+        this.panel.errors = [];
+        //console.log(that.getContext());
         axe.a11yCheck(this.getContext(), this.getOptions(), function (results) {
             if (results.violations.length) {
                 $(results.violations).each((j, rule) => {
@@ -176,13 +158,15 @@ class FixturePlugin extends Plugin {
                         annotate.errorLabel(
                             $el, "", help, entry);
                     });
-                    Array.from(axe.getRules(), r => r.ruleId);
-                    var ruleSet = axe.getRules().filter(r => that.inclusions.find(rule => r.ruleId === rule));
-                    that.panel.setTitle(that.getTitle());
-                    that.about(summaryTemplate({violations: results.violations.length, rules: ruleSet}));
-                    that.panel.render();
                 });
             }
+
+
+            var ruleSet = Array.from(new Set(axe.getRules().filter(r => that.getInclusions().has(r.ruleId))));
+            console.log(ruleSet)
+            that.panel.setTitle(that.getTitle());
+            that.summary(summaryTemplate({violations: results.violations.length, rules: ruleSet}));
+            that.panel.render();
 
         });
     }
@@ -192,4 +176,4 @@ class FixturePlugin extends Plugin {
     }
 }
 
-module.exports = FixturePlugin;
+module.exports = MultiPlugin;
