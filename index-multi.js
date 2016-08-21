@@ -78,10 +78,10 @@ class Toolbar {
 
 $(function() {
     var bar = new Toolbar();
-    if ((getParameterByName('aXeA11yMulti') === "true") && getParameterByName('aXeA11yConf')) {
+    if ((getParameterByName('aXeA11yMulti') === "true") && getParameterByName('aXeTota11yConf')) {
 
         var url = window.location.protocol+"//"+window.location.host;
-        var conf = this.getParameterByName('aXeTota11yConf');
+        var conf = getParameterByName('aXeTota11yConf');
         var aXeTota11yConf = url+conf;
         console.log(aXeTota11yConf);
         $.getJSON( aXeTota11yConf,  (data) => {
