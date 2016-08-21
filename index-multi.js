@@ -79,7 +79,12 @@ class Toolbar {
 $(function() {
     var bar = new Toolbar();
     if ((getParameterByName('aXeA11yMulti') === "true") && getParameterByName('aXeA11yConf')) {
-        $.getJSON( getParameterByName('aXeA11yConf'), (data) => {
+
+        var url = window.location.protocol+"//"+window.location.host;
+        var conf = this.getParameterByName('aXeTota11yConf');
+        var aXeTota11yConf = url+conf;
+        console.log(aXeTota11yConf);
+        $.getJSON( aXeTota11yConf,  (data) => {
             return data;
         }).fail((msg) => {
             console.log("Error loading configuration file: "+msg.responseText);

@@ -50,7 +50,11 @@ class ContextPlugin extends Plugin {
 
     setConf(cb, err) {
         var that = this;
-        $.getJSON( this.getParameterByName('aXeA11yConf'), function( data ) {
+        var url = window.location.protocol+"//"+window.location.host;
+        var conf = this.getParameterByName('aXeTota11yConf');
+        var aXeTota11yConf = url+conf;
+        console.log(aXeTota11yConf);
+        $.getJSON( aXeTota11yConf, function( data ) {
             that.conf = data[0];
         }).fail(function(msg){
             console.log("Error loading configuration file: "+msg.responseText);

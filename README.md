@@ -77,13 +77,17 @@ If provided, the **brand** property of the _branding_ object supplies the title 
 
 To use the Custom plugin in a page, assuming you are not running it with ```npm run-script test-custom```, you would pass in the path to the JSON config file as the value of the **aXeTota11yConf** URL parameter, as follows:
 
-- http://**domain**/?aXeTota11yConf=**path-to-conf**.json
+- http://**domain**/?aXeTota11yConf=**/path/to/conf**.json
+
+The path to conf should be relative to ```window.location.protocol+"//"+window.location.host```.
 
 ### Multi
 
 To use the Multi plugin in a page, assuming you are not running it with ```npm run-script test-multi```, you would pass the **aXeTota11yConf** URL parameter, as before, but would also pass in the **aXeTota11yMulti** with a value of true, as follows:
 
-- http://**domain**/?aXeTota11yConf=**path-to-conf**.json&**aXeTota11yMulti=true**
+- http://**domain**/?aXeTota11yConf=**/path/to/conf**.json&**aXeTota11yMulti=true**
+
+The path to conf should be relative to ```window.location.protocol+"//"+window.location.host```.
 
 If the **application** property is provided for the _branding_ object in the JSON config file, then this is used for the description of the plugin.  If it is not provided, the description is automatically generated from the _options_ object. 
 

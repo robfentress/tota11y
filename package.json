@@ -29,8 +29,8 @@
     "build": "webpack -p",
     "build-multi": "webpack -p --config=multi.webpack.config.js",
     "test": "open http://localhost:8080/webpack-dev-server/ && webpack-dev-server --hot",
-    "test-custom": "open http://localhost:8080/webpack-dev-server/?aXeA11yConf=test/custom.json && webpack-dev-server --hot",
-    "test-multi": "open 'http://localhost:8080/webpack-dev-server/?aXeA11yConf=test/multi.json&aXeA11yMulti=true' && webpack-dev-server --config=multi.webpack.config.js --hot"
+    "test-custom": "open http://localhost:8080/webpack-dev-server/?aXeTota11yConf=/test/custom.json && webpack-dev-server --hot",
+    "test-multi": "open 'http://localhost:8080/webpack-dev-server/?aXeTota11yConf=/test/multi.json&aXeA11yMulti=true' && webpack-dev-server --config=multi.webpack.config.js --hot"
   },
   "license": "MIT"
 }
