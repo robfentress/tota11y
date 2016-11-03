@@ -81,9 +81,9 @@ To use the Custom plugin in a page, assuming you are not running it with ```npm 
 
 ### Multi
 
-To use the Multi plugin in a page, assuming you are not running it with ```npm run-script test-multi```, you would pass the **aXeTota11yConf** URL parameter, as before, but would also pass in the **aXeTota11yMulti** with a value of true, as follows:
+To use the Multi plugin in a page, assuming you are not running it with ```npm run-script test-multi```, you would pass the **aXeA11yConf** URL parameter, as before, but would also pass in the **aXeTota11yMulti** with a value of true, as follows:
 
-- http://**domain**/?aXeTota11yConf=**path-to-conf**.json&**aXeTota11yMulti=true**
+- http://**domain**/?aXeA11yConf=**path-to-conf**.json&**aXeA11yMulti=true**
 
 If the **application** property is provided for the _branding_ object in the JSON config file, then this is used for the description of the plugin.  If it is not provided, the description is automatically generated from the _options_ object. 
 

@@ -13,12 +13,12 @@ let EverythingPlugin = require("./everything");
 let CustomPlugin = require("./custom");
 
 module.exports = [
-    new HeadingsPlugin(),
+/*    new HeadingsPlugin(),
     new ContrastPlugin(),
     new LinkTextPlugin(),
     new LabelsPlugin(),
     new AltTextPlugin(),
     new LandmarksPlugin(),
     new EverythingPlugin(),
-    new CustomPlugin()
+    new CustomPlugin()*/
 ];

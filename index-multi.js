@@ -78,17 +78,26 @@ class Toolbar {
 
 $(function() {
     var bar = new Toolbar();
-    if ((getParameterByName('aXeA11yMulti') === "true") && getParameterByName('aXeA11yConf')) {
-        $.getJSON( getParameterByName('aXeA11yConf'), (data) => {
-            return data;
-        }).fail((msg) => {
-            console.log("Error loading configuration file: "+msg.responseText);
-        }).then((conf) => {
-            bar.setConf(conf);
+    if (getParameterByName('aXeA11yMulti') === "true") {
+        if (typeof aXeA11yConf !== "undefined") {
+            bar.setConf(aXeA11yConf);
             bar.appendTo($("body"));
-        }, function(){
-            console.log("Error with callback");
-        });
+        } else {
+            if (getParameterByName('aXeA11yConf')) {
+                $.getJSON(getParameterByName('aXeA11yConf'), (data) => {
+                    return data;
+                }).fail((msg) => {
+                    console.log("Error loading configuration file: " + msg.responseText);
+                }).then((conf) => {
+                    bar.setConf(conf);
+                    bar.appendTo($("body"));
+                }, function () {
+                    console.log("Error with callback");
+                });
+            } else {
+                console.log("Must must provide aXeA11yConf configuration, either as file name or internal JSON object");
+            }
+        }
     } else {
         bar.appendTo($("body"));
     }
