@@ -89,13 +89,13 @@
       "rules": {
         "color-contrast": { "enabled": "false" },
         "skip-link": {"enabled": "false"},
-        "image-alt": { "enabled": "true" }
+        "checkboxgroup": { "enabled": "true" }
       }
     }
   },
   {
     "context": {
-      "include": [["jumbotron"]],
+      "include": [["jumbotron"],["#navbar"]],
       "exclude": [[".tota11y-toolbar"]]
     },
     "options": {
@@ -110,7 +110,8 @@
       "rules": {
         "color-contrast": { "enabled": "false" },
         "skip-link": {"enabled": "false"},
-        "image-alt": { "enabled": "true" }
+        "image-alt": { "enabled": "true" },
+        "checkboxgroup": { "enabled": "true" }
       }
     }
   }
