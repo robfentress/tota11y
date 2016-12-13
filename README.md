@@ -77,17 +77,22 @@ If provided, the **brand** property of the _branding_ object supplies the title 
 
 To use the Custom plugin in a page, assuming you are not running it with ```npm run-script test-custom```, you would pass in the path to the JSON config file as the value of the **aXeTota11yConf** URL parameter, as follows:
 
-- http://**domain**/?aXeTota11yConf=**path-to-conf**.json
+- http://**domain**/?aXea11yConf=**/path/to/conf**.json
 
 ### Multi
 
 To use the Multi plugin in a page, assuming you are not running it with ```npm run-script test-multi```, you would pass the **aXeA11yConf** URL parameter, as before, but would also pass in the **aXeTota11yMulti** with a value of true, as follows:
 
-- http://**domain**/?aXeA11yConf=**path-to-conf**.json&**aXeA11yMulti=true**
+- http://**domain**/?aXeA11yConf=**/path/to/conf**.json&**aXeA11yMulti=true**
 
 If the **application** property is provided for the _branding_ object in the JSON config file, then this is used for the description of the plugin.  If it is not provided, the description is automatically generated from the _options_ object. 
 
 If the **brand** property of the _branding_ object is not provided, it is automatically generated from the _context_ object.
+
+* If aXeA11yMulti=true is set as a URL parameter, and an aXeA11yConf URL paramater is provided which points to the absolute path to a valid conf file, then that conf file is used to populate the pluginscontainer, and the plugins set in plugins/index.js are ignored.
+* If aXeA11yMulti=true is set as a URL parameter, and an aXeA11yConf URL paramater is not provided, and there is an aXeA11y object defined in the page, then the tests defined in that object are added to the tests defined in plugins/index.js
+* If aXeA11yMulti is not set to true, and there is an aXeA11y object defined in the page, then only the first test defined in that object is added to the tests defined in plugins/index.js
+* If aXeA11yMulti is not set to true, and an aXeA11yConf URL paramater is provided which points to the absolute path to a valid conf file, and there is not an aXeA11y object defined in the page, then the custom plugin is added  to the tests defined in plugins/index.js
 
 ## Special thanks
 

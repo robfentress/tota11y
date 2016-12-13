@@ -17,6 +17,7 @@ class ContextPlugin extends Plugin {
         this.setTitle("Custom aXe Test");
         this.setDescription('Runs specified Deque aXe\'s rules on specific selectors');
         this.setConf(() => {
+            console.log(this.getConf().branding);
             if (typeof this.getConf().branding !== "undefined") {
                 this.setTitle(this.getConf().branding.brand || this.getTitle());
             }
@@ -50,15 +51,27 @@ class ContextPlugin extends Plugin {
 
     setConf(cb, err) {
         var that = this;
-        $.getJSON( this.getParameterByName('aXeA11yConf'), function( data ) {
-            that.conf = data[0];
-        }).fail(function(msg){
-            console.log("Error loading configuration file: "+msg.responseText);
-        }).then(function(){
+        var aXeA11yConf = this.getParameterByName('aXeA11yConf');
+        var options = (typeof aXeA11y === 'undefined') ? { multi: false } : aXeA11y;
+        if (typeof options.conf === "undefined") {
+            if (aXeA11yConf) {
+                $.getJSON(aXeA11yConf, function (data) {
+                    that.conf = data[0];
+                }).fail(function (msg) {
+                    console.log("Error loading configuration file: " + msg.responseText);
+                }).then(function () {
+                    typeof cb === 'function' && cb();
+                }, function () {
+                    typeof err === 'function' && err();
+                });
+            } else {
+                console.log("Must must provide configuration, either as file name or internal JSON object");
+            }
+        } else {
+            that.conf = options.conf[0];
+            console.log(that.conf);
             typeof cb === 'function' && cb();
-        }, function(){
-            typeof err === 'function' && err();
-        });
+        }
     }
 
     getContext() {

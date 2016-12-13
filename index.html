@@ -39,7 +39,7 @@
     <div role="main">
         <div class="jumbotron">
             <div class="container" role="article">
-                <h1>Hello, world!</h1>
+                <h1>Hello, world!xx</h1>
                 <p>This is a template for a simple marketing or informational website. It includes a large callout called a jumbotron and three supporting pieces of content. Use it as a starting point to create something more unique.</p>
                 <p>
                     <a href="#">Click here</a> to see why. Or <a href="#">check out more demo pages</a> on my blog.
@@ -134,65 +134,127 @@
         </footer>
     </div> <!-- /container -->
     <script>
+        var aXeA11y = {
+            "multi": false,
+            "conf": [
+                {
+                    "branding": {
+                        "brand": "Testing Rules",
+                        "application": "See Summary in info panel for details."
+                    },
+                    "context": {
+                        "include": [["#navbar"]],
+                        "exclude": [[".tota11y-toolbar"]]
+                    },
+                    "options": {
+                        "runOnly": {
+                            "type": "rule",
+                            "values": [
+                                "accesskeys",
+                                "area-alt",
+                                "aria-allowed-attr",
+                                "aria-required-attr",
+                                "aria-required-children",
+                                "aria-required-parent",
+                                "aria-roles",
+                                "aria-valid-attr-value",
+                                "aria-valid-attr",
+                                "audio-caption",
+                                "blink",
+                                "button-name",
+                                "bypass",
+                                "checkboxgroup",
+                                "color-contrast",
+                                "definition-list",
+                                "dlitem",
+                                "document-title",
+                                "duplicate-id",
+                                "empty-heading",
+                                "frame-title",
+                                "heading-order",
+                                "html-has-lang",
+                                "html-lang-valid",
+                                "image-alt",
+                                "image-redundant-alt",
+                                "input-image-alt",
+                                "label-title-only",
+                                "label",
+                                "layout-table",
+                                "link-in-text-block",
+                                "linkname",
+                                "list",
+                                "listitem",
+                                "marquee",
+                                "meta-refresh",
+                                "meta-viewport-large",
+                                "object-alt",
+                                "radiogroup",
+                                "region",
+                                "scope-attr-valid",
+                                "server-side-image-map",
+                                "skip-link",
+                                "tabindex",
+                                "table-duplicate-name",
+                                "table-fake-caption",
+                                "td-has-header",
+                                "td-headers-attr",
+                                "th-has-data-cells",
+                                "valid-lang",
+                                "video-caption",
+                                "video-description"
+                            ]
+                        },
 
-        /*var aXeA11yConf = [
-            {
-                "branding": {
-                    "brand": "templates/content.php",
-                    "application": "Tests all rules."
+                        "rules": {
+                            "color-contrast": { "enabled": "false" },
+                            "skip-link": {"enabled": "false"},
+                            "image-alt": { "enabled": "true" }
+                        }
+                    }
                 },
-                "context": {
-                    "include": [
-                        [
-                            ".post-1241"
-                        ]
-                    ],
-                    "exclude": [
-                        [
-                            ".tota11y-toolbar"
-                        ]
-                    ]
+                {
+
+                    "context": {
+                        "include": [["body"]],
+                        "exclude": [[".tota11y-toolbar"]]
+                    },
+                    "options": {
+                        "runOnly": {
+                            "type": "tag",
+                            "values": ["wcag2a", "wcag2aa"]
+                        },
+
+                        "rules": {
+                            "color-contrast": { "enabled": "false" },
+                            "skip-link": {"enabled": "false"},
+                            "image-alt": { "enabled": "true" }
+                        }
+                    }
                 },
-                "options": {
-                    "runOnly": {
-                        "type": "tag",
-                        "values": [
-                            "wcag2a",
-                            "wcag2aa",
-                            "best-practice"
-                        ]
+                {
+                    "context": {
+                        "include": [["jumbotron"]],
+                        "exclude": [[".tota11y-toolbar"]]
+                    },
+                    "options": {
+                        "runOnly": {
+                            "type": "tags",
+                            "value": {
+                                "include": ["wcag2a", "wcag2aa"],
+                                "exclude": ["section508"]
+                            }
+                        },
+
+                        "rules": {
+                            "color-contrast": { "enabled": "false" },
+                            "skip-link": {"enabled": "false"},
+                            "image-alt": { "enabled": "true" }
+                        }
                     }
                 }
-            },
-            {
-                "branding": {
-                    "brand": "templates/footer.php",
-                    "application": "Tests all rules."
-                },
-                "context": {
-                    "include": [
-                        [
-                            ".post-1241"
-                        ]
-                    ],
-                    "exclude": [
-                        [
-                            ".tota11y-toolbar"
-                        ]
-                    ]
-                },
-                "options": {
-                    "runOnly": {
-                        "type": "tag",
-                        "values": [
-                            "wcag2a",
-                            "wcag2aa",
-                            "best-practice"
-                        ]
-                    }
-                }
-            }
-        ]*/
+
+            ]
+        }
 
     </script>
 

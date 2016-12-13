@@ -64,6 +64,12 @@
         "video-caption",
         "video-description"
       ]
+    },
+
+    "rules": {
+      "color-contrast": { "enabled": "false" },
+      "skip-link": {"enabled": "false"},
+      "image-alt": { "enabled": "true" }
     }
   }
 }]

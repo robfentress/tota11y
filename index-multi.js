@@ -16,6 +16,7 @@ var toolbarTemplate = require("./templates/toolbar.handlebars");
 require("script!./node_modules/axe-core/axe.js");
 
 let MultiPlugin = require("./plugins/multi");
+let CustomPlugin = require("./plugins/custom");
 
 // From: Gras Double (http://stackoverflow.com/users/289317/gras-double)
 // Reference: http://stackoverflow.com/questions/901115/how-can-i-get-query-string-values-in-javascript
@@ -47,9 +48,18 @@ class Toolbar {
         return this.getContext().include;
     }
 
-    appendFixture(fixture, pluginsContainer) {
+    setPluginsContainer(pluginsContainer) {
+        this.pluginsContainer = pluginsContainer;
+    }
+
+    getPluginsContainer() {
+        return this.pluginsContainer;
+    }
+
+    appendFixture(fixture) {
         var plugin = new MultiPlugin(fixture);
-        plugin.appendTo(pluginsContainer);
+        this.appendPlugin(plugin);
+        //plugin.appendTo(pluginsContainer);
     }
 
     appendTo($el) {
@@ -64,42 +74,64 @@ class Toolbar {
 
         // Attach each plugin
         var $pluginsContainer = $toolbar.find(".tota11y-plugins");
-        plugins.forEach((plugin) => {
-            // Mount the plugin to the list
-            plugin.appendTo($pluginsContainer);
-        });
+        this.setPluginsContainer($pluginsContainer);
 
-        if (this.getConf()) {
-            this.getConf().forEach((fixture) => this.appendFixture(fixture, $pluginsContainer));
-        }
+    }
 
+    appendPlugin(plugin) {
+        console.log(this.getPluginsContainer());
+        plugin.appendTo(this.getPluginsContainer());
     }
 }
 
 $(function() {
     var bar = new Toolbar();
-    if (getParameterByName('aXeA11yMulti') === "true") {
-        if (typeof aXeA11yConf !== "undefined") {
-            bar.setConf(aXeA11yConf);
+
+    var options = (typeof aXeA11y === 'undefined') ? { multi: false } : aXeA11y;
+    var aXeA11yMulti = getParameterByName('aXeA11yMulti');
+
+    options.multi = ((aXeA11yMulti === "true") || (options.multi === true));
+
+    var multiIsSet = !(((typeof aXeA11y === 'undefined') || ((aXeA11y.multi !== true) && (aXeA11y.multi !== false))) && ((aXeA11yMulti !== "true") || (aXeA11yMulti !== "false")));
+
+    if (options.multi) {
+        console.log('multi true');
+        if (getParameterByName('aXeA11yConf')) { //conf file path provided
+            $.getJSON(getParameterByName('aXeA11yConf'), (data) => {
+                return data;
+            }).fail((msg) => {
+                console.log("Error loading configuration file: " + msg.responseText);
+            }).then((conf) => {
+                bar.setConf(conf);
+                bar.appendTo($("body"));
+                bar.getConf().forEach((fixture) => bar.appendFixture(fixture));
+            }, function () {
+                console.log("Error with callback");
+            });
+        } else if (typeof options.conf !== "undefined") { //in page object provided
+            console.log("monkey");
+            bar.setConf(options.conf);
             bar.appendTo($("body"));
+            bar.getConf().forEach((fixture) => bar.appendFixture(fixture));
         } else {
-            if (getParameterByName('aXeA11yConf')) {
-                $.getJSON(getParameterByName('aXeA11yConf'), (data) => {
-                    return data;
-                }).fail((msg) => {
-                    console.log("Error loading configuration file: " + msg.responseText);
-                }).then((conf) => {
-                    bar.setConf(conf);
-                    bar.appendTo($("body"));
-                }, function () {
-                    console.log("Error with callback");
-                });
-            } else {
-                console.log("Must must provide aXeA11yConf configuration, either as file name or internal JSON object");
-            }
+            console.log("Must must provide configuration, either as file name or internal JSON object");
         }
     } else {
+        console.log('multi false');
         bar.appendTo($("body"));
+        if ((aXeA11yMulti === "false") && (typeof aXeA11y === 'undefined')) {
+            var custom = new CustomPlugin();
+            bar.appendPlugin(custom);
+        }
+        /*if (multiIsSet) {
+            console.log('multi is set');
+            var custom = new CustomPlugin();
+            bar.appendPlugin(custom);
+        }*/
     }
+    plugins.forEach((plugin) => {
+        // Mount the plugin to the list
+        bar.appendPlugin(plugin);
+    });
 
 });
