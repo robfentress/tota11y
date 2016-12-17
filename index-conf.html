@@ -133,6 +133,130 @@
             <p>&copy; Company 2014</p>
         </footer>
     </div> <!-- /container -->
+    <script>
+        var aXeA11y = {
+            "multi": false,
+            "conf": [
+                {
+                    "branding": {
+                        "brand": "Testing Rulesx",
+                        "application": "See Summary in info panel for details."
+                    },
+                    "context": {
+                        "include": [["#navbar"]],
+                        "exclude": [[".tota11y-toolbar"]]
+                    },
+                    "options": {
+                        "runOnly": {
+                            "type": "rule",
+                            "values": [
+                                "accesskeys",
+                                "area-alt",
+                                "aria-allowed-attr",
+                                "aria-required-attr",
+                                "aria-required-children",
+                                "aria-required-parent",
+                                "aria-roles",
+                                "aria-valid-attr-value",
+                                "aria-valid-attr",
+                                "audio-caption",
+                                "blink",
+                                "button-name",
+                                "bypass",
+                                "checkboxgroup",
+                                "color-contrast",
+                                "definition-list",
+                                "dlitem",
+                                "document-title",
+                                "duplicate-id",
+                                "empty-heading",
+                                "frame-title",
+                                "heading-order",
+                                "html-has-lang",
+                                "html-lang-valid",
+                                "image-alt",
+                                "image-redundant-alt",
+                                "input-image-alt",
+                                "label-title-only",
+                                "label",
+                                "layout-table",
+                                "link-in-text-block",
+                                "linkname",
+                                "list",
+                                "listitem",
+                                "marquee",
+                                "meta-refresh",
+                                "meta-viewport-large",
+                                "object-alt",
+                                "radiogroup",
+                                "region",
+                                "scope-attr-valid",
+                                "server-side-image-map",
+                                "skip-link",
+                                "tabindex",
+                                "table-duplicate-name",
+                                "table-fake-caption",
+                                "td-has-header",
+                                "td-headers-attr",
+                                "th-has-data-cells",
+                                "valid-lang",
+                                "video-caption",
+                                "video-description"
+                            ]
+                        },
+
+                        "rules": {
+                            "color-contrast": { "enabled": false},
+                            "skip-link": {"enabled": false},
+                            "image-alt": { "enabled": true }
+                        }
+                    }
+                },
+                {
+
+                    "context": {
+                        "include": [["body"]],
+                        "exclude": [[".tota11y-toolbar"]]
+                    },
+                    "options": {
+                        "runOnly": {
+                            "type": "tag",
+                            "values": ["wcag2a", "wcag2aa"]
+                        },
+
+                        "rules": {
+                            "color-contrast": { "enabled": false},
+                            "skip-link": {"enabled": false},
+                            "image-alt": { "enabled": true }
+                        }
+                    }
+                },
+                {
+                    "context": {
+                        "include": [["jumbotron"]],
+                        "exclude": [[".tota11y-toolbar"]]
+                    },
+                    "options": {
+                        "runOnly": {
+                            "type": "tags",
+                            "value": {
+                                "include": ["wcag2a", "wcag2aa"],
+                                "exclude": ["section508"]
+                            }
+                        },
+
+                        "rules": {
+                            "color-contrast": { "enabled": false},
+                            "skip-link": {"enabled": false},
+                            "image-alt": { "enabled": true }
+                        }
+                    }
+                }
+
+            ]
+        }
+
+    </script>
 
     <script src="http://localhost:8080/webpack-dev-server.js"></script>
     <script src="tota11y.min.js"></script>

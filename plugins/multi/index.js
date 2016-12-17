@@ -18,22 +18,15 @@ class MultiPlugin extends Plugin {
         super();
 
         this.conf = conf;
-        this.context;
-        this.setContext(this.getConf().context);
+        this.branding = this.conf.branding || {};
+        this.context = this.conf.context || {};
+        this.options = this.conf.options || {};
+        this._myDesc = [];
 
-        var context = this.getContext();
-
-        var inclusions = []; // all rules to be included
-        var exclusions = []; // all rules to be excluded
         var includedTags = []; // tags used to select rules to be included in scan
         var excludedTags = []; // tags used to remove rules to be included in scan
         var includedRules = []; // rules to be included in scan, except ones selected because in excludedTags
         var excludedRules = []; // rules to be included in scan, except ones to be removed because in excludedTags
-        var desc = []; // used to build description string from options in conf
-
-        var branding = this.conf.branding;
-
-        this.options = this.conf.options;
 
         if (this.options) {
 
@@ -52,38 +45,33 @@ class MultiPlugin extends Plugin {
         }
 
         if (includedTags.length>0) {
-            inclusions = this.rules(includedTags);
-            desc.push("+ tags [" + includedTags +"]");
+            this.addToDesc("+", "tags", includedTags);
         }
         if (excludedTags.length>0) {
-            exclusions = this.rules(excludedTags);
-            desc.push("- tags [" + excludedTags +"]");
+            this.addToDesc("-", "tags", excludedTags);
         }
         if (includedRules.length>0) {
-            inclusions = inclusions.concat(includedRules);
-            desc.push("+ rules [" + includedRules +"]");
+            this.addToDesc("+", "rules", includedRules);
         }
         if (excludedRules.length>0) {
-            exclusions = exclusions.concat(excludedRules);
-            desc.push("- rules [" + excludedRules +"]");
-        }
-        inclusions = dedup(inclusions);
-        exclusions = dedup(exclusions);
-        inclusions = this.filterRules(inclusions, exclusions);
-        this.inclusions = inclusions;
-
-        if (branding) {
-            this.title = branding.brand || "Fixture: " + context.include;
-            if (branding.application) this.description = branding.application;
-        } else {
-            this.title = "Fixture: " + context.include;
-            this.description = desc.join(' ');
+            this.addToDesc("-", "rules", excludedRules);
         }
 
+        let inc = this.context.include || ['document'];
+        let title = "+"+JSON.stringify(inc);
+        title += (this.context.exclude.length > 0) ? ", -"+JSON.stringify(this.context.exclude) : "";
+
+        this.title = this.branding.brand || "context: " + title;
+        this.description = this.branding.application || this._myDesc.join(' ');
+
+        /**
+         * For each listed rule, add to includedRules or excludedRules arrays, based on whether enabled property is true
+         * @param {Object} rules - Rules to include or exclude from a scan
+         */
         function setRules(rules) {
             if (rules) {
                 Object.keys(rules).forEach((rule) => {
-                    if (rules[rule].enabled === "true") {
+                    if (rules[rule].enabled === true) {
                         includedRules.push(rule);
                     } else {
                         excludedRules.push(rule);
@@ -91,43 +79,68 @@ class MultiPlugin extends Plugin {
                 });
             }
         }
-
-        function dedup(ary) {
-            return new Set(ary);
-        }
     }
 
-    filterRules(inc, ex) {
-        var inc = Array.from(inc);
-        var difference = Array.from(new Set(inc.filter(r => !ex.has(r))));
-        return difference;
+    set conf(value) {
+        this._conf = value;
     }
-    rules(tags) {
-        return Array.from(axe.getRules(tags), r => r.ruleId)
+
+    get conf() {
+        return this._conf;
     }
-    getInclusions() {
-        return new Set(this.inclusions);
+
+    set branding(value) {
+        this._branding = value;
+    }
+
+    get branding() {
+        return this._branding;
+    }
+
+    set title(value) {
+        this._title = value;
+    }
+
+    get title() {
+        return this._title;
+    }
+
+    set description(value) {
+        this._description = value;
+    }
+
+    get description() {
+        return this._description;
+    }
+
+    set context(value) {
+        this._context = value;
+    }
+
+    get context() {
+        return this._context;
+    }
+
+    set options(value) {
+        this._options = value;
+    }
+
+    get options() {
+        return this._options;
+    }
+    get filteredRules() {
+        return axe._audit.rules.filter(rule => {
+            return axe.utils.ruleShouldRun(rule, {page:true}, this.options)
+        });
+    }
+
+    addToDesc(addOrSubtract, type, values) {
+        this._myDesc.push(addOrSubtract + " " + type + JSON.stringify(values));
     }
 
     setTitle(title) {
         this.title = title;
         this.panel.setTitle(this.title);
-    }
-
-
-    getConf() {
-        return this.conf;
-    }
-
-    setContext(context) {
-        this.context = context;
-    }
-    getContext() {
-        return this.context;
-    }
-
-    getOptions() {
-        return this.getConf().options;
     }
 
     getTitle() {
@@ -142,8 +155,7 @@ class MultiPlugin extends Plugin {
 
         let that = this;
         this.panel.errors = [];
-        //console.log(that.getContext());
-        axe.a11yCheck(this.getContext(), this.getOptions(), function (results) {
+        axe.a11yCheck(this.context, this.options, function (results) {
             if (results.violations.length) {
                 $(results.violations).each((j, rule) => {
                     let impact = rule.impact;
@@ -161,11 +173,8 @@ class MultiPlugin extends Plugin {
                 });
             }
 
-
-            var ruleSet = Array.from(new Set(axe.getRules().filter(r => that.getInclusions().has(r.ruleId))));
-            console.log(ruleSet)
-            that.panel.setTitle(that.getTitle());
-            that.summary(summaryTemplate({violations: results.violations.length, rules: ruleSet}));
+            that.panel.setTitle(that.title);
+            that.summary(summaryTemplate({rules: that.filteredRules, violations: results.violations, passes: results.passes}));
             that.panel.render();
 
         });

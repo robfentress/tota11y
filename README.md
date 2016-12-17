@@ -23,19 +23,11 @@ You can build tota11y with:
 
 ```
 npm install
-```
-
-Then, if you want to use the original base class, you would run: 
-```
 npm run build
 ```
-However, if you wish to support the use of the **Multi** plugin, you would run:
-```
-npm run-script build-multi
-```
-This uses _multi.webpack.config.js_ to specify index-multi.js, as the entry point for the webpack app build.
 
 ## Testing
+### Testing with default plugins
 
 You can perform manual testing with tota11y using the following:
 
@@ -45,23 +37,14 @@ npm test
 
 This will open `http://localhost:8080/webpack-dev-server/` in your browser, which will automatically update as you make changes.
 
-### Testing Plugins Using Config Files
+### Testing the Multi plugin
 
-If you wish to test the **Custom** plugin, you would run:
-```
-npm run-script test-custom
-```
-This pulls in the file, _./test/custom.json_, and uses it to create a custom plugin in the tota11y toolbar.
+If you wish to use the **Multi** plugin, you would run either `npm run-script test-param` or `npm run-script test-conf`.  Both generate custom plugins from an array of conf objects.  The difference is that `test-param` gets the conf objects from a separate JSON file, as specified in the _aXeA11yConf_ URL parameter, whereas `test-conf` loads a page that has the conf objects defined in the page itself.
 
-If you wish to use the **Multi** plugin, you would run:
-```
-npm run-script test-multi
-```
-This pulls in the file, _./test/multi.json_, and uses it to create a custom plugin in the tota11y toolbar.  However, if you test **Multi**, make sure you first run ```npm run-script build-multi```, as this uses a different base class.
+##Configuring
+### conf object format
 
-## Plugins from Config Files
-
-The **Custom** and **Multi** plugins create custom plugins in the tota11y toolbar, based on parameters passed in the URL string, one of which being the path to a json file containing information about the fixtures to be used and the rules to be run.  The json file contains an array of objects, each object containing:
+The **Multi** plugin creates a separate custom plugin in the tota11y toolbar for each conf object specified in the JSON config file or in the _conf_ array of the _aXeA11y_ object defined in the page itself.  Each conf object describes the _context_ within the page that the checks are to be run on, along with _options_ that determine which rules are to be tested.  So, the _conf_ object consists of the following properties, which are, themselves, objects:
 
 - branding _(optional)_
 - context
@@ -69,30 +52,37 @@ The **Custom** and **Multi** plugins create custom plugins in the tota11y toolba
 
 Each of these follows the syntax for the [aXe Javascript Accessibility API](https://github.com/dequelabs/axe-core/blob/master/doc/API.md) . The values for [context](https://github.com/dequelabs/axe-core/blob/master/doc/API.md#context-parameter) and [options](https://github.com/dequelabs/axe-core/blob/master/doc/API.md#options-parameter) are based on the parameters passed to the [aXe.a11yCheck function](https://github.com/dequelabs/axe-core/blob/master/doc/API.md#api-name-axea11ycheck), which, indeed is what is directly used to run the scans.
 
-The **Custom** and **Multi** plugins function in almost the same way, except that the **Custom** plugin can only create one custom plugin from the objects in the JSON config file.  It uses the first object in the array and disregards any others.  The only reason you would use **Custom** rather than **Multi** is that **Custom** does not require any changes to the original tota11y base class, as found in _./index.js_.
+The _branding_ object is used to control how the custom plugins are listed in the tota11y toolbar.  It consists of the **brand** and **application** properties.  
 
-If provided, the **brand** property of the _branding_ object supplies the title for the generated plugin/s.  
+If provided, the **brand** property supplies the title for the generated plugin/s.  If it is not provided, it is automatically generated from the _context_ object.
 
-### Custom
+If the **application** property is provided, then this is used for the description of the plugin.  If it is not provided, the description is automatically generated from the _options_ object. 
 
-To use the Custom plugin in a page, assuming you are not running it with ```npm run-script test-custom```, you would pass in the path to the JSON config file as the value of the **aXeTota11yConf** URL parameter, as follows:
+The way the branding object is used in the Multi plugin is slightly different from how it is described in the aXe API.  Therefore, it is possible we may decide to change the property names we use in the future to avoid any possible confusion.
 
-- http://**domain**/?aXea11yConf=**/path/to/conf**.json
+### Configuring Multi with URL parameters
 
-### Multi
+To configure the Multi plugin to create custom plugins based on a separate JSON config file, you would pass in the path to the config file as the value of the **aXeA11yConf** URL parameter, as follows
 
-To use the Multi plugin in a page, assuming you are not running it with ```npm run-script test-multi```, you would pass the **aXeA11yConf** URL parameter, as before, but would also pass in the **aXeTota11yMulti** with a value of true, as follows:
+- http://**domain**/?aXeA11yConf=**/path/to/conf.json**
 
-- http://**domain**/?aXeA11yConf=**/path/to/conf**.json&**aXeA11yMulti=true**
+The path is relative to the root of the domain and should include the initial slash.
 
-If the **application** property is provided for the _branding_ object in the JSON config file, then this is used for the description of the plugin.  If it is not provided, the description is automatically generated from the _options_ object. 
+By default, this will only display the tests you have specified in the config file.  If you wish to also display the plugins that usually display in the tota11y toolbar, you would set the **aXeA11yMulti** URL parameter to true.
 
-If the **brand** property of the _branding_ object is not provided, it is automatically generated from the _context_ object.
+- http://**domain**/?aXeA11yConf=/path/to/conf.json&**aXeA11yMulti=true**
 
-* If aXeA11yMulti=true is set as a URL parameter, and an aXeA11yConf URL paramater is provided which points to the absolute path to a valid conf file, then that conf file is used to populate the pluginscontainer, and the plugins set in plugins/index.js are ignored.
-* If aXeA11yMulti=true is set as a URL parameter, and an aXeA11yConf URL paramater is not provided, and there is an aXeA11y object defined in the page, then the tests defined in that object are added to the tests defined in plugins/index.js
-* If aXeA11yMulti is not set to true, and there is an aXeA11y object defined in the page, then only the first test defined in that object is added to the tests defined in plugins/index.js
-* If aXeA11yMulti is not set to true, and an aXeA11yConf URL paramater is provided which points to the absolute path to a valid conf file, and there is not an aXeA11y object defined in the page, then the custom plugin is added  to the tests defined in plugins/index.js
+### Configuring Multi from within the page to be scanned
+
+You can also configure the custom plugins you want Multi to display by creating an _aXeA11y_ object within the page itself.  This object would contain the **conf** and **multi** properties with these serving roughly the same purpose as the **aXeA11yConf** and **aXeA11yMulti** URL parameters. However, rather than referencing the path to a config file, the **conf** property would be the actual array of conf objects that would have been provided in that config file.  The **multi** property would be a boolean and would serve thge same function as the **aXeA11yMulti** URL parameter.
+
+### Precedence in configuration methods
+
+If a page contains an _aXeA11y_ object, its properties can be overridden by specifying the corresponding parameters in the URL string.  
+
+If the **aXeA11yConf** parameter is provided, it completely replaces the array specified by the **conf** parameter of the _aXeA11y_ object.
+
+Assuming either the **conf** property or the **aXeA11yConf** parameter have been set, if no value is provided for **aXeA11yMulti** or **multi**, only the plugins specified in the conf objects are displayed.  However, if neither **conf** nor **aXeA11yConf** have been set, then the default plugins _are_ displayed.
 
 ## Special thanks
 

@@ -1,7 +1,22 @@
 <div class="tota11y-axe-about">
-    <p><strong>Rules Violated: <span class="tota11y-info-error-count">{{violations}}</span></strong></p>
-    <p>The following rules were included in the scan:</p>
-    <dl>
-    {{#each rules}}<dt>{{this.ruleId}}:</dt> <dd>{{this.description}}</dd>{{/each}}
-    </dl>
+    <div class="tota11y-info-violations">
+        <p><strong>Rules Violated: <span class="tota11y-info-error-count">{{violations.length}}</span></strong></p>
+        {{#if violations.length}}
+        <dl>
+        {{#each violations}}<dt>{{this.id}}:</dt> <dd>{{this.description}}</dd>{{/each}}
+        </dl>
+        {{/if}}
+    </div>
+        <div class="tota11y-info-passes">
+        <p><strong>Rules Passed: <span class="tota11y-info-error-count">{{passes.length}}</span></strong></p>
+        {{#if passes.length}}
+        <dl>
+            {{#each passes}}<dt>{{this.id}}:</dt> <dd>{{this.description}}</dd>{{/each}}
+        </dl>
+        {{/if}}
+    </div>
+    <p><strong>Rules in Scan:</strong></p>
+    <ul>
+        {{#each rules}}<li>{{this.id}}</li>{{/each}}
+    </ul>
 </div>

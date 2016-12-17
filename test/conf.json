@@ -1,7 +1,7 @@
 [
   {
     "branding": {
-      "brand": "Testing Rules",
+      "brand": "Testing Rulesxx",
       "application": "See Summary in info panel for details."
     },
     "context": {
@@ -68,9 +68,9 @@
       },
 
       "rules": {
-        "color-contrast": { "enabled": "false" },
-        "skip-link": {"enabled": "false"},
-        "image-alt": { "enabled": "true" }
+        "color-contrast": { "enabled": false},
+        "skip-link": {"enabled": false},
+        "image-alt": { "enabled": true }
       }
     }
   },
@@ -87,9 +87,9 @@
       },
 
       "rules": {
-        "color-contrast": { "enabled": "false" },
-        "skip-link": {"enabled": "false"},
-        "checkboxgroup": { "enabled": "true" }
+        "color-contrast": { "enabled": false},
+        "skip-link": {"enabled": false},
+        "image-alt": { "enabled": true }
       }
     }
   },
@@ -108,10 +108,10 @@
       },
 
       "rules": {
-        "color-contrast": { "enabled": "false" },
-        "skip-link": {"enabled": "false"},
-        "image-alt": { "enabled": "true" },
-        "checkboxgroup": { "enabled": "true" }
+        "color-contrast": { "enabled": false},
+        "skip-link": {"enabled": false},
+        "image-alt": { "enabled": true },
+        "checkboxgroup": { "enabled": true }
       }
     }
   }

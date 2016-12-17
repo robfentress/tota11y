@@ -7,9 +7,13 @@
     "url": "http://github.com/Khan/tota11y.git"
   },
   "author": "Jordan Scales <scalesjordan@gmail.com>",
+  "contributors": [{
+    "name": "Robert Fentress",
+    "email": "learn@vt.edu"
+  }],
   "devDependencies": {
     "autoprefixer-loader": "^1.2.0",
-    "axe-core": "^1.0.1",
+    "axe-core": "^2.1.7",
     "babel-core": "^5.0.12",
     "babel-loader": "^5.0.0",
     "css-loader": "^0.10.1",
@@ -27,10 +31,9 @@
   },
   "scripts": {
     "build": "webpack -p",
-    "build-multi": "webpack -p --config=multi.webpack.config.js",
     "test": "open http://localhost:8080/webpack-dev-server/ && webpack-dev-server --hot",
-    "test-custom": "open http://localhost:8080/webpack-dev-server/?aXeA11yConf=/test/custom.json && webpack-dev-server --config=multi.webpack.config.js --hot",
-    "test-multi": "open 'http://localhost:8080/webpack-dev-server/?aXeA11yConf=/test/multi.json&aXeA11yMulti=true' && webpack-dev-server --config=multi.webpack.config.js --hot"
+    "test-param": "open 'http://localhost:8080/webpack-dev-server/?aXeA11yConf=/test/conf.json&aXeA11yMulti=true' && webpack-dev-server --config=webpack.config.js --hot",
+    "test-conf": "open 'http://localhost:8080/webpack-dev-server/index-conf.html' && webpack-dev-server --config=webpack.config.js --hot"
   },
   "license": "MIT"
 }
