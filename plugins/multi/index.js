@@ -23,10 +23,10 @@ class MultiPlugin extends Plugin {
         this.options = this.conf.options || {};
         this._myDesc = [];
 
-        var includedTags = []; // tags used to select rules to be included in scan
-        var excludedTags = []; // tags used to remove rules to be included in scan
-        var includedRules = []; // rules to be included in scan, except ones selected because in excludedTags
-        var excludedRules = []; // rules to be included in scan, except ones to be removed because in excludedTags
+        let includedTags = []; // tags used to select rules to be included in scan
+        let excludedTags = []; // tags used to remove rules to be included in scan
+        let includedRules = []; // rules to be included in scan, except ones selected because in excludedTags
+        let excludedRules = []; // rules to be included in scan, except ones to be removed because in excludedTags
 
         if (this.options) {
 
@@ -138,11 +138,6 @@ class MultiPlugin extends Plugin {
         this._myDesc.push(addOrSubtract + " " + type + JSON.stringify(values));
     }
 
-    setTitle(title) {
-        this.title = title;
-        this.panel.setTitle(this.title);
-    }
-
     getTitle() {
         return this.title;
     }
@@ -153,9 +148,8 @@ class MultiPlugin extends Plugin {
 
     run() {
 
-        let that = this;
         this.panel.errors = [];
-        axe.a11yCheck(this.context, this.options, function (results) {
+        axe.a11yCheck(this.context, this.options, results => {
             if (results.violations.length) {
                 $(results.violations).each((j, rule) => {
                     let impact = rule.impact;
@@ -164,7 +158,7 @@ class MultiPlugin extends Plugin {
                     $(rule.nodes).each((i, node) => {
                         let $el = $(node.target[0]);
 
-                        let entry = that.error(
+                        let entry = this.error(
                             help, summary(node) + errorTemplate({impact:impact, bestpractice:bestpractice}), $el);
 
                         annotate.errorLabel(
@@ -173,9 +167,9 @@ class MultiPlugin extends Plugin {
                 });
             }
 
-            that.panel.setTitle(that.title);
-            that.summary(summaryTemplate({rules: that.filteredRules, violations: results.violations, passes: results.passes}));
-            that.panel.render();
+            this.panel.setTitle(this.title);
+            this.summary(summaryTemplate({rules: this.filteredRules, violations: results.violations, passes: results.passes}));
+            this.panel.render();
 
         });
     }
