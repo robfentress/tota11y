@@ -18,7 +18,7 @@ class MultiPlugin extends Plugin {
         super();
 
         this.conf = conf;
-        this.branding = this.conf.branding || {};
+        this.plugin = this.conf.plugin || {};
         this.context = this.conf.context || {};
         this.options = this.conf.options || {};
         this._myDesc = [];
@@ -61,8 +61,8 @@ class MultiPlugin extends Plugin {
         let title = "+"+JSON.stringify(inc);
         title += (this.context.exclude.length > 0) ? ", -"+JSON.stringify(this.context.exclude) : "";
 
-        this.title = this.branding.brand || "context: " + title;
-        this.description = this.branding.application || this._myDesc.join(' ');
+        this.title = this.plugin.title || "context: " + title;
+        this.description = this.plugin.description || this._myDesc.join(' ');
 
         /**
          * For each listed rule, add to includedRules or excludedRules arrays, based on whether enabled property is true
@@ -89,12 +89,12 @@ class MultiPlugin extends Plugin {
         return this._conf;
     }
 
-    set branding(value) {
-        this._branding = value;
+    set plugin(value) {
+        this._plugin = value;
     }
 
-    get branding() {
-        return this._branding;
+    get plugin() {
+        return this._plugin;
     }
 
     set title(value) {

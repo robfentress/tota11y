@@ -46,19 +46,17 @@ If you wish to use the **Multi** plugin, you would run either `npm run-script te
 
 The **Multi** plugin creates a separate custom plugin in the tota11y toolbar for each conf object specified in the JSON config file or in the _conf_ array of the _aXeA11y_ object defined in the page itself.  Each conf object describes the _context_ within the page that the checks are to be run on, along with _options_ that determine which rules are to be tested.  So, the _conf_ object consists of the following properties, which are, themselves, objects:
 
-- branding _(optional)_
+- plugin _(optional)_
 - context
 - options
 
 Each of these follows the syntax for the [aXe Javascript Accessibility API](https://github.com/dequelabs/axe-core/blob/master/doc/API.md) . The values for [context](https://github.com/dequelabs/axe-core/blob/master/doc/API.md#context-parameter) and [options](https://github.com/dequelabs/axe-core/blob/master/doc/API.md#options-parameter) are based on the parameters passed to the [aXe.a11yCheck function](https://github.com/dequelabs/axe-core/blob/master/doc/API.md#api-name-axea11ycheck), which, indeed is what is directly used to run the scans.
 
-The _branding_ object is used to control how the custom plugins are listed in the tota11y toolbar.  It consists of the **brand** and **application** properties.  
+The _plugin_ object is used to control how the custom plugins are listed in the tota11y toolbar.  It consists of the **title** and **description** properties.  
 
-If provided, the **brand** property supplies the title for the generated plugin/s.  If it is not provided, it is automatically generated from the _context_ object.
+If provided, the **title** property supplies the title for the generated plugin/s.  If it is not provided, it is automatically generated from the _context_ object.
 
-If the **application** property is provided, then this is used for the description of the plugin.  If it is not provided, the description is automatically generated from the _options_ object. 
-
-The way the branding object is used in the Multi plugin is slightly different from how it is described in the aXe API.  Therefore, it is possible we may decide to change the property names we use in the future to avoid any possible confusion.
+If the **description** property is provided, then this is used for the description of the plugin.  If it is not provided, the description is automatically generated from the _options_ object. 
 
 ### Configuring Multi with URL parameters
 

@@ -1,8 +1,8 @@
 [
   {
-    "branding": {
-      "brand": "Testing Rulesxx",
-      "application": "See Summary in info panel for details."
+    "plugin": {
+      "title": "Testing Rulesxx",
+      "description": "See Summary in info panel for details."
     },
     "context": {
       "include": [["#navbar"]],
